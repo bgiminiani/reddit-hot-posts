@@ -1,8 +1,6 @@
-import { IHttpRequest, IHttpResponse } from '../protocols/IHttp'
+import { IHttpRequest, IHttpResponse, IController, IDateValidator } from '../protocols'
 import { MissingParamError, InvalidParamError } from '../errors'
 import { badRequest, serverError } from '../helpers/HttpHelper'
-import { IController } from '../protocols/IController'
-import { IDateValidator } from '../protocols/IDateValidator'
 
 export class HotPostsController implements IController {
   constructor (private readonly dateValidator: IDateValidator) {}
