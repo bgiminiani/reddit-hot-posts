@@ -4,7 +4,7 @@ import { badRequest } from '../helpers/HttpHelper'
 
 export class HotPostsController {
   handle (httpRequest: IHttpRequest): IHttpResponse {
-    const requiredParams = ['initialDate', 'finalDate']
+    const requiredParams = ['initialDate', 'finalDate', 'order']
     for (const param of requiredParams) {
       if (!httpRequest.body[param]) {
         return badRequest(new MissingParamError(param))
