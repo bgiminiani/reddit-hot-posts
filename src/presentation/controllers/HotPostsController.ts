@@ -16,10 +16,13 @@ export class HotPostsController implements IController {
       }
     }
 
-    const { initialDate } = httpRequest.body
+    const { initialDate, finalDate } = httpRequest.body
     const dateIsValid = this.dateValidator.isValid(initialDate)
     if (!dateIsValid) {
       return badRequest(new InvalidParamError('initialDate'))
+    }
+    if (!finalDate) {
+      return badRequest(new InvalidParamError('finalDate'))
     }
   }
 }
