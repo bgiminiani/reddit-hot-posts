@@ -1,10 +1,12 @@
 import { HotPostsController } from './HotPostsController'
 import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 import { IDateValidator } from '../protocols'
+import { IOrderValidator } from '../protocols/IOrderValidator'
 
 interface ISut {
   sut: HotPostsController
   dateValidatorStub: IDateValidator
+  orderValidatorStub: IOrderValidator
 }
 
 const makeDateValidator = (): IDateValidator => {
@@ -16,11 +18,22 @@ const makeDateValidator = (): IDateValidator => {
   return new DateValidatorStub()
 }
 
+const makeOrderValidator = (): IOrderValidator => {
+  class OrderValidatorStub implements IOrderValidator {
+    isValid (date: string): boolean {
+      return true
+    }
+  }
+  return new OrderValidatorStub()
+}
+
 const makeSut = (): ISut => {
   const dateValidatorStub = makeDateValidator()
-  const sut = new HotPostsController(dateValidatorStub)
+  const orderValidatorStub = makeOrderValidator()
+  const sut = new HotPostsController(dateValidatorStub, orderValidatorStub)
   return {
     dateValidatorStub,
+    orderValidatorStub,
     sut
   }
 }
@@ -109,5 +122,20 @@ describe('HotPostsController', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should return status code 400 if order is invalid', () => {
+    const { sut, orderValidatorStub } = makeSut()
+    jest.spyOn(orderValidatorStub, 'isValid').mockReturnValueOnce(false)
+    const httpRequest = {
+      body: {
+        initialDate: 'invalid_initial_date',
+        finalDate: 'final_date',
+        order: 'ups'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('order'))
   })
 })
