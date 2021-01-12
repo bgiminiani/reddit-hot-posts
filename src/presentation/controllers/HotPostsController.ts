@@ -4,25 +4,33 @@ import { badRequest } from '../helpers/HttpHelper'
 import { IController } from '../protocols/IController'
 import { IDateValidator } from '../protocols/IDateValidator'
 import { InvalidParamError } from '../errors/InvalidParamError'
+import { ServerError } from '../errors/ServerError'
 
 export class HotPostsController implements IController {
   constructor (private readonly dateValidator: IDateValidator) {}
 
   handle (httpRequest: IHttpRequest): IHttpResponse {
-    const requiredParams = ['initialDate', 'finalDate', 'order']
-    for (const param of requiredParams) {
-      if (!httpRequest.body[param]) {
-        return badRequest(new MissingParamError(param))
+    try {
+      const requiredParams = ['initialDate', 'finalDate', 'order']
+      for (const param of requiredParams) {
+        if (!httpRequest.body[param]) {
+          return badRequest(new MissingParamError(param))
+        }
       }
-    }
 
-    const { initialDate, finalDate } = httpRequest.body
-    const dateIsValid = this.dateValidator.isValid(initialDate)
-    if (!dateIsValid) {
-      return badRequest(new InvalidParamError('initialDate'))
-    }
-    if (!finalDate) {
-      return badRequest(new InvalidParamError('finalDate'))
+      const { initialDate, finalDate } = httpRequest.body
+      const dateIsValid = this.dateValidator.isValid(initialDate)
+      if (!dateIsValid) {
+        return badRequest(new InvalidParamError('initialDate'))
+      }
+      if (!finalDate) {
+        return badRequest(new InvalidParamError('finalDate'))
+      }
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: new ServerError()
+      }
     }
   }
 }
