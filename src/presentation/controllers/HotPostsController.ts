@@ -1,10 +1,9 @@
 import { IHttpRequest, IHttpResponse } from '../protocols/IHttp'
 import { MissingParamError } from '../errors/MissingParamError'
-import { badRequest } from '../helpers/HttpHelper'
+import { badRequest, serverError } from '../helpers/HttpHelper'
 import { IController } from '../protocols/IController'
 import { IDateValidator } from '../protocols/IDateValidator'
 import { InvalidParamError } from '../errors/InvalidParamError'
-import { ServerError } from '../errors/ServerError'
 
 export class HotPostsController implements IController {
   constructor (private readonly dateValidator: IDateValidator) {}
@@ -27,10 +26,7 @@ export class HotPostsController implements IController {
         return badRequest(new InvalidParamError('finalDate'))
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new ServerError()
-      }
+      return serverError()
     }
   }
 }
