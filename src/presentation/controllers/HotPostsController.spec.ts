@@ -25,15 +25,6 @@ const makeSut = (): ISut => {
   }
 }
 
-const makeDateValidatorWithError = (): IDateValidator => {
-  class DateValidatorStub implements IDateValidator {
-    isValid (date: string): boolean {
-      throw new Error()
-    }
-  }
-  return new DateValidatorStub()
-}
-
 describe('HotPostsController', () => {
   it('Should return status code 400 if initial date is not provided', () => {
     const { sut } = makeSut()
@@ -104,8 +95,10 @@ describe('HotPostsController', () => {
   })
 
   it('Should return status code 500 if DateValidator throws Error', () => {
-    const dateValidatorStub = makeDateValidatorWithError()
-    const sut = new HotPostsController(dateValidatorStub)
+    const { sut, dateValidatorStub } = makeSut()
+    jest.spyOn(dateValidatorStub, 'isValid').mockImplementation(() => {
+      throw new Error()
+    })
     const httpRequest = {
       body: {
         initialDate: 'initial_date',
