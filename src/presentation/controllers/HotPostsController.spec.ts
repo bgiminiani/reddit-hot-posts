@@ -1,8 +1,6 @@
 import { HotPostsController } from './HotPostsController'
-import { MissingParamError } from '../errors/MissingParamError'
-import { InvalidParamError } from '../errors/InvalidParamError'
+import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 import { IDateValidator } from '../protocols/IDateValidator'
-import { ServerError } from '../errors/ServerError'
 
 interface ISut {
   sut: HotPostsController
