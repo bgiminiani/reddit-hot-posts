@@ -76,4 +76,18 @@ describe('HotPostsController', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('initialDate'))
   })
+
+  it('Should call DateValidator with correct date', () => {
+    const { sut, dateValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(dateValidatorStub, 'isValid')
+    const httpRequest = {
+      body: {
+        initialDate: 'any_initial_date',
+        finalDate: 'final_date',
+        order: 'ups'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith('any_initial_date')
+  })
 })
