@@ -1,9 +1,13 @@
 import { HotPostsController } from './HotPostsController'
 import { MissingParamError } from '../errors/MissingParamError'
 
+const makeSut = (): HotPostsController => {
+  return new HotPostsController()
+}
+
 describe('HotPostsController', () => {
   it('Should return status code 400 if initial date is not provided', () => {
-    const sut = new HotPostsController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         finalDate: 'final_date',
@@ -16,7 +20,7 @@ describe('HotPostsController', () => {
   })
 
   it('Should return status code 400 if final date is not provided', () => {
-    const sut = new HotPostsController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         initialDate: 'initial_date',
@@ -29,7 +33,7 @@ describe('HotPostsController', () => {
   })
 
   it('Should return status code 400 if order is not provided', () => {
-    const sut = new HotPostsController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         initialDate: 'initial_date',
