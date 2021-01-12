@@ -1,5 +1,7 @@
+import { IHttpRequest, IHttpResponse } from '../protocols/IHttp'
+
 export class HotPostsController {
-  handle (httpRequest: any): any {
+  handle (httpRequest: IHttpRequest): IHttpResponse {
     if (!httpRequest.body.initialDate) {
       return {
         statusCode: 400,
