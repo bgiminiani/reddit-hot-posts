@@ -7,18 +7,31 @@ interface ISut {
   dateValidatorStub: IDateValidator
 }
 
-const makeSut = (): ISut => {
+const makeDateValidator = (): IDateValidator => {
   class DateValidatorStub implements IDateValidator {
     isValid (date: string): boolean {
       return true
     }
   }
-  const dateValidatorStub = new DateValidatorStub()
+  return new DateValidatorStub()
+}
+
+const makeSut = (): ISut => {
+  const dateValidatorStub = makeDateValidator()
   const sut = new HotPostsController(dateValidatorStub)
   return {
     dateValidatorStub,
     sut
   }
+}
+
+const makeDateValidatorWithError = (): IDateValidator => {
+  class DateValidatorStub implements IDateValidator {
+    isValid (date: string): boolean {
+      throw new Error()
+    }
+  }
+  return new DateValidatorStub()
 }
 
 describe('HotPostsController', () => {
@@ -91,12 +104,7 @@ describe('HotPostsController', () => {
   })
 
   it('Should return status code 500 if DateValidator throws Error', () => {
-    class DateValidatorStub implements IDateValidator {
-      isValid (date: string): boolean {
-        throw new Error()
-      }
-    }
-    const dateValidatorStub = new DateValidatorStub()
+    const dateValidatorStub = makeDateValidatorWithError()
     const sut = new HotPostsController(dateValidatorStub)
     const httpRequest = {
       body: {
