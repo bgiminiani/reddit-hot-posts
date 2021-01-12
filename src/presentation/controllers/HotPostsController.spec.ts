@@ -11,6 +11,19 @@ describe('HotPostsController', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('Missing param: initial date'))
+    expect(httpResponse.body).toEqual(new Error('Missing param: initialDate'))
+  })
+
+  it('Should return status code 400 if final date is not provided', () => {
+    const sut = new HotPostsController()
+    const httpRequest = {
+      body: {
+        initialDate: 'initial_date',
+        order: 'ups'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('Missing param: finalDate'))
   })
 })
