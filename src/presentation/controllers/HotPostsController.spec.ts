@@ -2,6 +2,7 @@ import { HotPostsController } from './HotPostsController'
 import { MissingParamError } from '../errors/MissingParamError'
 import { InvalidParamError } from '../errors/InvalidParamError'
 import { IDateValidator } from '../protocols/IDateValidator'
+import { ServerError } from '../errors/ServerError'
 
 interface ISut {
   sut: HotPostsController
@@ -89,5 +90,25 @@ describe('HotPostsController', () => {
     }
     sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith('any_initial_date')
+  })
+
+  it('Should return status code 500 if DateValidator throws Error', () => {
+    class DateValidatorStub implements IDateValidator {
+      isValid (date: string): boolean {
+        throw new Error()
+      }
+    }
+    const dateValidatorStub = new DateValidatorStub()
+    const sut = new HotPostsController(dateValidatorStub)
+    const httpRequest = {
+      body: {
+        initialDate: 'initial_date',
+        finalDate: 'final_date',
+        order: 'ups'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
