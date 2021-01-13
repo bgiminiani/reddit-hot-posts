@@ -1,10 +1,9 @@
-import { HotPostsController } from './HotPostsController'
-import { MissingParamError, InvalidParamError, ServerError } from '../errors'
-import { IDateValidator } from '../protocols'
-import { IOrderValidator } from '../protocols/IOrderValidator'
+import { LoadHotPostsController } from './LoadHotPostsController'
+import { MissingParamError, InvalidParamError, ServerError } from '../../../errors'
+import { IDateValidator, IOrderValidator } from './protocols'
 
 interface ISut {
-  sut: HotPostsController
+  sut: LoadHotPostsController
   dateValidatorStub: IDateValidator
   orderValidatorStub: IOrderValidator
 }
@@ -30,7 +29,7 @@ const makeOrderValidator = (): IOrderValidator => {
 const makeSut = (): ISut => {
   const dateValidatorStub = makeDateValidator()
   const orderValidatorStub = makeOrderValidator()
-  const sut = new HotPostsController(dateValidatorStub, orderValidatorStub)
+  const sut = new LoadHotPostsController(dateValidatorStub, orderValidatorStub)
   return {
     dateValidatorStub,
     orderValidatorStub,
@@ -38,7 +37,7 @@ const makeSut = (): ISut => {
   }
 }
 
-describe('HotPostsController', () => {
+describe('LoadHotPostsController', () => {
   it('Should return status code 400 if initial date is not provided', () => {
     const { sut } = makeSut()
     const httpRequest = {

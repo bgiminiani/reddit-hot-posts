@@ -1,9 +1,8 @@
-import { IHttpRequest, IHttpResponse, IController, IDateValidator } from '../protocols'
-import { MissingParamError, InvalidParamError } from '../errors'
-import { badRequest, serverError } from '../helpers/HttpHelper'
-import { IOrderValidator } from '../protocols/IOrderValidator'
+import { IHttpRequest, IHttpResponse, IController, IDateValidator, IOrderValidator } from './protocols'
+import { MissingParamError, InvalidParamError } from '../../../errors'
+import { badRequest, serverError } from '../../../helpers/HttpHelper'
 
-export class HotPostsController implements IController {
+export class LoadHotPostsController implements IController {
   constructor (
     private readonly dateValidator: IDateValidator,
     private readonly orderValidator: IOrderValidator) {}
@@ -29,7 +28,7 @@ export class HotPostsController implements IController {
         return badRequest(new InvalidParamError('finalDate'))
       }
 
-      const orderValidator = this.orderValidator.isValid(order)
+      const orderValidator = this.orderValidator.isValid('order1')
       if (!orderValidator) {
         return badRequest(new InvalidParamError('order'))
       }
