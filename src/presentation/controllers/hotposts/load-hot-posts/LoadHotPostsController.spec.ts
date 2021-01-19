@@ -1,7 +1,7 @@
 import MockDate from 'mockdate'
 import { LoadHotPostsController } from './LoadHotPostsController'
 import { MissingParamError, InvalidParamError, ServerError } from '../../../errors'
-import { IDateValidator, IOrderValidator } from './protocols'
+import { IDateValidator, IOrderValidator } from '../../../protocols'
 import { IHotPostsParam, ILoadHotPosts } from '../../../../domain/usecases/ILoadHotPosts'
 import { IHotPost } from '../../../../domain/models/IHotPost'
 

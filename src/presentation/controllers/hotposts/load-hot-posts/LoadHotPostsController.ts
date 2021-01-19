@@ -1,4 +1,4 @@
-import { IHttpRequest, IHttpResponse, IController, IDateValidator, IOrderValidator } from './protocols'
+import { IHttpRequest, IHttpResponse, IController, IDateValidator, IOrderValidator } from '../../../protocols'
 import { MissingParamError, InvalidParamError } from '../../../errors'
 import { badRequest, serverError } from '../../../helpers/HttpHelper'
 import { ILoadHotPosts } from '../../../../domain/usecases/ILoadHotPosts'
