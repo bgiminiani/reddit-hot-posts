@@ -198,4 +198,21 @@ describe('LoadHotPostsController', () => {
       orderBy: 'valid_order'
     })
   })
+
+  it('Should return status code 500 if LoadHotPosts throws Error', () => {
+    const { sut, loadHotPostsStub } = makeSut()
+    jest.spyOn(loadHotPostsStub, 'load').mockImplementation(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        initialDate: 'initial_date',
+        finalDate: 'final_date',
+        orderBy: 'ups'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
 })
