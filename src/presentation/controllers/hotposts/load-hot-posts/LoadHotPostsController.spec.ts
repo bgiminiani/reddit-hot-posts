@@ -86,7 +86,7 @@ describe('LoadHotPostsController', () => {
     const httpRequest = {
       body: {
         finalDate: 'final_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     const httpResponse = sut.handle(httpRequest)
@@ -99,7 +99,7 @@ describe('LoadHotPostsController', () => {
     const httpRequest = {
       body: {
         initialDate: 'initial_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     const httpResponse = sut.handle(httpRequest)
@@ -107,7 +107,7 @@ describe('LoadHotPostsController', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('finalDate'))
   })
 
-  it('Should return status code 400 if order is not provided', () => {
+  it('Should return status code 400 if orderBy is not provided', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -117,7 +117,7 @@ describe('LoadHotPostsController', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('order'))
+    expect(httpResponse.body).toEqual(new MissingParamError('orderBy'))
   })
 
   it('Should return status code 400 if initial date is invalid', () => {
@@ -127,7 +127,7 @@ describe('LoadHotPostsController', () => {
       body: {
         initialDate: 'invalid_initial_date',
         finalDate: 'final_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     const httpResponse = sut.handle(httpRequest)
@@ -142,7 +142,7 @@ describe('LoadHotPostsController', () => {
       body: {
         initialDate: 'any_initial_date',
         finalDate: 'final_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     sut.handle(httpRequest)
@@ -158,7 +158,7 @@ describe('LoadHotPostsController', () => {
       body: {
         initialDate: 'initial_date',
         finalDate: 'final_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     const httpResponse = sut.handle(httpRequest)
@@ -166,19 +166,19 @@ describe('LoadHotPostsController', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('Should return status code 400 if order is invalid', () => {
+  it('Should return status code 400 if orderBy is invalid', () => {
     const { sut, orderValidatorStub } = makeSut()
     jest.spyOn(orderValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpRequest = {
       body: {
         initialDate: 'invalid_initial_date',
         finalDate: 'final_date',
-        order: 'ups'
+        orderBy: 'ups'
       }
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('order'))
+    expect(httpResponse.body).toEqual(new InvalidParamError('orderBy'))
   })
 
   it('Should call LoadHotPosts with correct values', () => {
@@ -188,7 +188,7 @@ describe('LoadHotPostsController', () => {
       body: {
         initialDate: 'valid_initial_date',
         finalDate: 'valid_final_date',
-        order: 'valid_order'
+        orderBy: 'valid_order'
       }
     }
     sut.handle(httpRequest)

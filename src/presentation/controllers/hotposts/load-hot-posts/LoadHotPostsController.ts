@@ -12,14 +12,14 @@ export class LoadHotPostsController implements IController {
 
   handle (httpRequest: IHttpRequest): IHttpResponse {
     try {
-      const requiredParams = ['initialDate', 'finalDate', 'order']
+      const requiredParams = ['initialDate', 'finalDate', 'orderBy']
       for (const param of requiredParams) {
         if (!httpRequest.body[param]) {
           return badRequest(new MissingParamError(param))
         }
       }
 
-      const { initialDate, finalDate, order } = httpRequest.body
+      const { initialDate, finalDate, orderBy } = httpRequest.body
 
       const initialDateIsValid = this.dateValidator.isValid(initialDate)
       if (!initialDateIsValid) {
@@ -31,9 +31,9 @@ export class LoadHotPostsController implements IController {
         return badRequest(new InvalidParamError('finalDate'))
       }
 
-      const orderValidator = this.orderValidator.isValid(order)
+      const orderValidator = this.orderValidator.isValid(orderBy)
       if (!orderValidator) {
-        return badRequest(new InvalidParamError('order'))
+        return badRequest(new InvalidParamError('orderBy'))
       }
 
       this.loadHotPosts.load({
