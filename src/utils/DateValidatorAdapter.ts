@@ -1,4 +1,4 @@
-import { IDateValidator } from '../presentation/controllers/hotposts/load-hot-posts/protocols/IDateValidator'
+import { IDateValidator } from '../presentation/protocols/IDateValidator'
 export class DateValidatorAdapter implements IDateValidator {
   isValid (date: string): boolean {
     return false
