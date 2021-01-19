@@ -7,5 +7,5 @@ export interface IHotPostsParam {
 }
 
 export interface ILoadHotPosts {
-  load: (hotPostsParam: IHotPostsParam) => IHotPost[]
+  load: (hotPostsParam: IHotPostsParam) => Promise<IHotPost[]>
 }

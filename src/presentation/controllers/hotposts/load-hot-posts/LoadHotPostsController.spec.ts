@@ -14,7 +14,7 @@ interface ISut {
 
 const makeLoadHotPosts = (): ILoadHotPosts => {
   class LoadHotPostsStub implements ILoadHotPosts {
-    load (hotPostsParam: IHotPostsParam): IHotPost[] {
+    async load (hotPostsParam: IHotPostsParam): Promise<IHotPost[]> {
       const fakeHotPosts = [
         {
           id: '39bf55ee-e55c-40e1-9539-d57d2bf53eed',
@@ -35,7 +35,7 @@ const makeLoadHotPosts = (): ILoadHotPosts => {
           numberOfComments: 1
         }
       ]
-      return fakeHotPosts
+      return await new Promise(resolve => resolve(fakeHotPosts))
     }
   }
   return new LoadHotPostsStub()
@@ -81,7 +81,7 @@ describe('LoadHotPostsController', () => {
     MockDate.reset()
   })
 
-  it('Should return status code 400 if initial date is not provided', () => {
+  it('Should return status code 400 if initial date is not provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -89,12 +89,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('initialDate'))
   })
 
-  it('Should return status code 400 if final date is not provided', () => {
+  it('Should return status code 400 if final date is not provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -102,12 +102,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('finalDate'))
   })
 
-  it('Should return status code 400 if orderBy is not provided', () => {
+  it('Should return status code 400 if orderBy is not provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -115,12 +115,12 @@ describe('LoadHotPostsController', () => {
         finalDate: 'final_date'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('orderBy'))
   })
 
-  it('Should return status code 400 if initial date is invalid', () => {
+  it('Should return status code 400 if initial date is invalid', async () => {
     const { sut, dateValidatorStub } = makeSut()
     jest.spyOn(dateValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpRequest = {
@@ -130,12 +130,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('initialDate'))
   })
 
-  it('Should call DateValidator with correct date', () => {
+  it('Should call DateValidator with correct date', async () => {
     const { sut, dateValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(dateValidatorStub, 'isValid')
     const httpRequest = {
@@ -145,11 +145,11 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith('any_initial_date')
   })
 
-  it('Should return status code 500 if DateValidator throws Error', () => {
+  it('Should return status code 500 if DateValidator throws Error', async () => {
     const { sut, dateValidatorStub } = makeSut()
     jest.spyOn(dateValidatorStub, 'isValid').mockImplementation(() => {
       throw new Error()
@@ -161,12 +161,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('Should return status code 400 if orderBy is invalid', () => {
+  it('Should return status code 400 if orderBy is invalid', async () => {
     const { sut, orderValidatorStub } = makeSut()
     jest.spyOn(orderValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpRequest = {
@@ -176,12 +176,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('orderBy'))
   })
 
-  it('Should call LoadHotPosts with correct values', () => {
+  it('Should call LoadHotPosts with correct values', async () => {
     const { sut, loadHotPostsStub } = makeSut()
     const loadSpy = jest.spyOn(loadHotPostsStub, 'load')
     const httpRequest = {
@@ -191,7 +191,7 @@ describe('LoadHotPostsController', () => {
         orderBy: 'valid_order'
       }
     }
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(loadSpy).toHaveBeenCalledWith({
       initialDate: 'valid_initial_date',
       finalDate: 'valid_final_date',
@@ -199,10 +199,10 @@ describe('LoadHotPostsController', () => {
     })
   })
 
-  it('Should return status code 500 if LoadHotPosts throws Error', () => {
+  it('Should return status code 500 if LoadHotPosts throws Error', async () => {
     const { sut, loadHotPostsStub } = makeSut()
-    jest.spyOn(loadHotPostsStub, 'load').mockImplementation(() => {
-      throw new Error()
+    jest.spyOn(loadHotPostsStub, 'load').mockImplementation(async () => {
+      return await new Promise((resolve, reject) => reject(new Error()))
     })
     const httpRequest = {
       body: {
@@ -211,12 +211,12 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('Should return status code 200 if valid params are provided', () => {
+  it('Should return status code 200 if valid params are provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -225,7 +225,7 @@ describe('LoadHotPostsController', () => {
         orderBy: 'ups'
       }
     }
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual(
       [

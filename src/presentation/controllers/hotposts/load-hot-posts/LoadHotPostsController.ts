@@ -10,7 +10,7 @@ export class LoadHotPostsController implements IController {
     private readonly loadHotPosts: ILoadHotPosts
   ) {}
 
-  handle (httpRequest: IHttpRequest): IHttpResponse {
+  async handle (httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const requiredParams = ['initialDate', 'finalDate', 'orderBy']
       for (const param of requiredParams) {
@@ -36,7 +36,7 @@ export class LoadHotPostsController implements IController {
         return badRequest(new InvalidParamError('orderBy'))
       }
 
-      const hotPosts = this.loadHotPosts.load({
+      const hotPosts = await this.loadHotPosts.load({
         initialDate: 'valid_initial_date',
         finalDate: 'valid_final_date',
         orderBy: 'valid_order'
