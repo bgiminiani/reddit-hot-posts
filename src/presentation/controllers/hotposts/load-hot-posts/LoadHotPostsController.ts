@@ -1,11 +1,14 @@
 import { IHttpRequest, IHttpResponse, IController, IDateValidator, IOrderValidator } from './protocols'
 import { MissingParamError, InvalidParamError } from '../../../errors'
 import { badRequest, serverError } from '../../../helpers/HttpHelper'
+import { ILoadHotPosts } from '../../../../domain/usecases/ILoadHotPosts'
 
 export class LoadHotPostsController implements IController {
   constructor (
     private readonly dateValidator: IDateValidator,
-    private readonly orderValidator: IOrderValidator) {}
+    private readonly orderValidator: IOrderValidator,
+    private readonly loadHotPosts: ILoadHotPosts
+  ) {}
 
   handle (httpRequest: IHttpRequest): IHttpResponse {
     try {
@@ -28,10 +31,16 @@ export class LoadHotPostsController implements IController {
         return badRequest(new InvalidParamError('finalDate'))
       }
 
-      const orderValidator = this.orderValidator.isValid('order1')
+      const orderValidator = this.orderValidator.isValid(order)
       if (!orderValidator) {
         return badRequest(new InvalidParamError('order'))
       }
+
+      this.loadHotPosts.load({
+        initialDate: 'valid_initial_date',
+        finalDate: 'valid_final_date',
+        orderBy: 'valid_order'
+      })
     } catch (error) {
       return serverError()
     }
