@@ -20,4 +20,11 @@ describe('DateValidator Adapter', () => {
     const isValid = sut.isValid('valid_date')
     expect(isValid).toBe(true)
   })
+
+  it('Should call validator with correct date', () => {
+    const sut = new DateValidatorAdapter()
+    const isDateSpy = jest.spyOn(validator, 'isDate')
+    sut.isValid('2018-10-03 03:48:21')
+    expect(isDateSpy).toHaveBeenCalledWith('2018-10-03 03:48:21')
+  })
 })
