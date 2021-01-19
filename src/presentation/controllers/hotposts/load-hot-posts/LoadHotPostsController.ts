@@ -36,11 +36,16 @@ export class LoadHotPostsController implements IController {
         return badRequest(new InvalidParamError('orderBy'))
       }
 
-      this.loadHotPosts.load({
+      const hotPosts = this.loadHotPosts.load({
         initialDate: 'valid_initial_date',
         finalDate: 'valid_final_date',
         orderBy: 'valid_order'
       })
+
+      return {
+        statusCode: 200,
+        body: hotPosts
+      }
     } catch (error) {
       return serverError()
     }
