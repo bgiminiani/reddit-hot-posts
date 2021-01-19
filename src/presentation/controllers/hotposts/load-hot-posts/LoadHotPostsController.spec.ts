@@ -215,4 +215,39 @@ describe('LoadHotPostsController', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
+
+  it('Should return status code 200 if valid params are provided', () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        initialDate: 'initial_date',
+        finalDate: 'final_date',
+        orderBy: 'ups'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual(
+      [
+        {
+          id: '39bf55ee-e55c-40e1-9539-d57d2bf53eed',
+          postTitle: 'Welcome to /r/artificial!',
+          authorName: 't2_3dncp',
+          authorFullName: 'CyberByte',
+          creationDate: new Date(),
+          numberOfUps: 130,
+          numberOfComments: 16
+        },
+        {
+          id: '3007c85a-d708-43ca-ba5d-8738052ccbd1',
+          postTitle: 'Google AI Introduces ToTTo: A Controlled Table-to-Text Generation Dataset Using Novel Annotation Process',
+          authorName: 't2_2wsvqwhg',
+          authorFullName: 'ai-lover',
+          creationDate: new Date(),
+          numberOfUps: 23,
+          numberOfComments: 1
+        }
+      ]
+    )
+  })
 })
