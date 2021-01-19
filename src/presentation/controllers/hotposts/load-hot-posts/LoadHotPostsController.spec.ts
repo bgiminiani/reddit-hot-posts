@@ -1,11 +1,44 @@
+import MockDate from 'mockdate'
 import { LoadHotPostsController } from './LoadHotPostsController'
 import { MissingParamError, InvalidParamError, ServerError } from '../../../errors'
 import { IDateValidator, IOrderValidator } from './protocols'
+import { IHotPostsParam, ILoadHotPosts } from '../../../../domain/usecases/ILoadHotPosts'
+import { IHotPost } from '../../../../domain/models/IHotPost'
 
 interface ISut {
   sut: LoadHotPostsController
   dateValidatorStub: IDateValidator
   orderValidatorStub: IOrderValidator
+  loadHotPostsStub: ILoadHotPosts
+}
+
+const makeLoadHotPosts = (): ILoadHotPosts => {
+  class LoadHotPostsStub implements ILoadHotPosts {
+    load (hotPostsParam: IHotPostsParam): IHotPost[] {
+      const fakeHotPosts = [
+        {
+          id: '39bf55ee-e55c-40e1-9539-d57d2bf53eed',
+          postTitle: 'Welcome to /r/artificial!',
+          authorName: 't2_3dncp',
+          authorFullName: 'CyberByte',
+          creationDate: new Date(),
+          numberOfUps: 130,
+          numberOfComments: 16
+        },
+        {
+          id: '3007c85a-d708-43ca-ba5d-8738052ccbd1',
+          postTitle: 'Google AI Introduces ToTTo: A Controlled Table-to-Text Generation Dataset Using Novel Annotation Process',
+          authorName: 't2_2wsvqwhg',
+          authorFullName: 'ai-lover',
+          creationDate: new Date(),
+          numberOfUps: 23,
+          numberOfComments: 1
+        }
+      ]
+      return fakeHotPosts
+    }
+  }
+  return new LoadHotPostsStub()
 }
 
 const makeDateValidator = (): IDateValidator => {
@@ -29,15 +62,25 @@ const makeOrderValidator = (): IOrderValidator => {
 const makeSut = (): ISut => {
   const dateValidatorStub = makeDateValidator()
   const orderValidatorStub = makeOrderValidator()
-  const sut = new LoadHotPostsController(dateValidatorStub, orderValidatorStub)
+  const loadHotPostsStub = makeLoadHotPosts()
+  const sut = new LoadHotPostsController(dateValidatorStub, orderValidatorStub, loadHotPostsStub)
   return {
+    sut,
     dateValidatorStub,
     orderValidatorStub,
-    sut
+    loadHotPostsStub
   }
 }
 
 describe('LoadHotPostsController', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   it('Should return status code 400 if initial date is not provided', () => {
     const { sut } = makeSut()
     const httpRequest = {
@@ -136,5 +179,23 @@ describe('LoadHotPostsController', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('order'))
+  })
+
+  it('Should call LoadHotPosts with correct values', () => {
+    const { sut, loadHotPostsStub } = makeSut()
+    const loadSpy = jest.spyOn(loadHotPostsStub, 'load')
+    const httpRequest = {
+      body: {
+        initialDate: 'valid_initial_date',
+        finalDate: 'valid_final_date',
+        order: 'valid_order'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(loadSpy).toHaveBeenCalledWith({
+      initialDate: 'valid_initial_date',
+      finalDate: 'valid_final_date',
+      orderBy: 'valid_order'
+    })
   })
 })
