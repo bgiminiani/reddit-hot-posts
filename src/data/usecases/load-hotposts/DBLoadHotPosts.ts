@@ -6,7 +6,7 @@ export class DBLoadHotPosts implements ILoadHotPosts {
   constructor (private readonly loadPostsRepository: ILoadPostsRepository) {}
 
   async load (hotPostsParam: IHotPostsParam): Promise<IHotPost[]> {
-    const hotPosts = this.loadPostsRepository.load(hotPostsParam)
-    return await new Promise(resolve => resolve(hotPosts))
+    const hotPosts = await this.loadPostsRepository.load(hotPostsParam)
+    return await new Promise(resolve => resolve(null))
   }
 }
