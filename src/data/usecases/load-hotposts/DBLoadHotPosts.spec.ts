@@ -3,11 +3,6 @@ import { IHotPostsParam } from '../../../domain/usecases/load-hotposts'
 import { IHotPost } from '../../../domain/models/IHotPost'
 import { ILoadPostsRepository } from './protocols/ILoadPostsRepository'
 
-interface ISut {
-  loadHotPostsRepositoryStub: ILoadPostsRepository
-  sut: DBLoadHotPosts
-}
-
 const makeLoadHotPostsRepositoryStub = (): ILoadPostsRepository => {
   class LoadHotPostsRepositoryStub {
     async load (hotPostsParam: IHotPostsParam): Promise<IHotPost[]> {
@@ -37,6 +32,11 @@ const makeLoadHotPostsRepositoryStub = (): ILoadPostsRepository => {
   return new LoadHotPostsRepositoryStub()
 }
 
+interface ISut {
+  loadHotPostsRepositoryStub: ILoadPostsRepository
+  sut: DBLoadHotPosts
+}
+
 const makeSut = (): ISut => {
   const loadHotPostsRepositoryStub = makeLoadHotPostsRepositoryStub()
   const sut = new DBLoadHotPosts(loadHotPostsRepositoryStub)
@@ -57,5 +57,17 @@ describe('DBLoadHotPosts Usecaes', () => {
     }
     await sut.load(hotPostsParams)
     expect(loadSpy).toHaveBeenCalledWith(hotPostsParams)
+  })
+
+  it('Should throws error if LoadHotPostsRepository throws Error', async () => {
+    const { sut, loadHotPostsRepositoryStub } = makeSut()
+    jest.spyOn(loadHotPostsRepositoryStub, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const hotPostsParams = {
+      initialDate: 'any_initial_date',
+      finalDate: 'any_final_date',
+      orderBy: 'any_order_by'
+    }
+    const hotPostsPromises = sut.load(hotPostsParams)
+    await expect(hotPostsPromises).rejects.toThrow()
   })
 })
