@@ -1,7 +1,7 @@
 import { IHttpRequest, IHttpResponse, IController, IDateValidator, IOrderValidator } from '../../../protocols'
 import { MissingParamError, InvalidParamError } from '../../../errors'
 import { badRequest, serverError } from '../../../helpers/HttpHelper'
-import { ILoadHotPosts } from '../../../../domain/usecases/ILoadHotPosts'
+import { ILoadHotPosts } from '../../../../domain/usecases/load-hotposts'
 
 export class LoadHotPostsController implements IController {
   constructor (
