@@ -1,4 +1,4 @@
-import { IHotPost } from '../models/IHotPost'
+import { IHotPost } from '../../models/IHotPost'
 
 export interface IHotPostsParam {
   initialDate: string
