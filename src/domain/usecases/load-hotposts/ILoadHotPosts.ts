@@ -1,11 +1,11 @@
 import { IHotPost } from '../../models/IHotPost'
 
-export interface IHotPostsParam {
+export interface ILoadHotPostsParam {
   initialDate: string
   finalDate: string
   orderBy: string
 }
 
 export interface ILoadHotPosts {
-  load: (hotPostsParam: IHotPostsParam) => Promise<IHotPost[]>
+  load: ({ initialDate, finalDate, orderBy }: ILoadHotPostsParam) => Promise<IHotPost[]>
 }

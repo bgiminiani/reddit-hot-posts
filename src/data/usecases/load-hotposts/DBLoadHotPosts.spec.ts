@@ -1,12 +1,12 @@
 import MockDate from 'mockdate'
 import { DBLoadHotPosts } from './DBLoadHotPosts'
-import { IHotPostsParam } from '../../../domain/usecases/load-hotposts'
+import { ILoadHotPostsParam } from '../../../domain/usecases/load-hotposts'
 import { IHotPost } from '../../../domain/models/IHotPost'
 import { ILoadPostsRepository } from './protocols/ILoadPostsRepository'
 
 const makeLoadHotPostsRepositoryStub = (): ILoadPostsRepository => {
   class LoadHotPostsRepositoryStub {
-    async load (hotPostsParam: IHotPostsParam): Promise<IHotPost[]> {
+    async load (hotPostsParam: ILoadHotPostsParam): Promise<IHotPost[]> {
       const fakeHotPosts = [
         {
           id: '39bf55ee-e55c-40e1-9539-d57d2bf53eed',

@@ -2,7 +2,7 @@ import MockDate from 'mockdate'
 import { LoadHotPostsController } from './LoadHotPostsController'
 import { MissingParamError, InvalidParamError, ServerError } from '../../../errors'
 import { IDateValidator, IOrderValidator } from '../../../protocols'
-import { IHotPostsParam, ILoadHotPosts } from '../../../../domain/usecases/load-hotposts'
+import { ILoadHotPostsParam, ILoadHotPosts } from '../../../../domain/usecases/load-hotposts'
 import { IHotPost } from '../../../../domain/models/IHotPost'
 
 interface ISut {
@@ -14,7 +14,7 @@ interface ISut {
 
 const makeLoadHotPosts = (): ILoadHotPosts => {
   class LoadHotPostsStub implements ILoadHotPosts {
-    async load (hotPostsParam: IHotPostsParam): Promise<IHotPost[]> {
+    async load (hotPostsParam: ILoadHotPostsParam): Promise<IHotPost[]> {
       const fakeHotPosts = [
         {
           id: '39bf55ee-e55c-40e1-9539-d57d2bf53eed',
